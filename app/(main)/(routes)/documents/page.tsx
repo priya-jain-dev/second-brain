@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/clerk-react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { PlusCircle } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -10,7 +10,6 @@ import { toast } from "sonner";
 const DocumentsPage = () => {
   const { user } = useUser();
   const create = useMutation(api.documents.create);
-
   const onCreate = () => {
     const promise = create({ title: "Untitled" });
     toast.promise(promise, {
