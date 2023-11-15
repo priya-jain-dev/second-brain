@@ -5,3 +5,6 @@
 4. npx convex dev
 3. npx convex dev --team name --project project-name --until-success (Existing project)
 ```
+
+# Deployed on 
+https://note-app-pi-ashy.vercel.app/
