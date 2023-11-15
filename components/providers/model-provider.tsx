@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import SettingModel from "../models/settings-model";
-import CoverImageModel from "../models/cover-image-model";
+import { CoverImageModal } from "../models/cover-image-modal";
 
 export const ModelProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -14,7 +14,7 @@ export const ModelProvider = () => {
   return (
     <>
       <SettingModel />
-      <CoverImageModel />
+      <CoverImageModal />
     </>
   );
 };

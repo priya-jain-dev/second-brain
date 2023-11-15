@@ -1,48 +1,52 @@
 "use client";
-import { useCoverImage } from "@/hooks/use-cover-image";
-import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
-import { useEdgeStore } from "@/lib/edgestore";
-import React, { useState } from "react";
-import { SingleImageDropzone } from "../single-image-dropzone";
+
+import { useState } from "react";
 import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { useParams } from "next/navigation";
+
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { useCoverImage } from "@/hooks/use-cover-image";
+import { SingleImageDropzone } from "@/components/single-image-dropzone";
+import { useEdgeStore } from "@/lib/edgestore";
+import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-const CoverImageModel = () => {
+export const CoverImageModal = () => {
   const params = useParams();
+  const update = useMutation(api.documents.update);
   const coverImage = useCoverImage();
-  const [file, setFile] = React.useState<File>();
+  const { edgestore } = useEdgeStore();
+
+  const [file, setFile] = useState<File>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { edgestore } = useEdgeStore();
-  const update = useMutation(api.documents.update);
+  const onClose = () => {
+    setFile(undefined);
+    setIsSubmitting(false);
+    coverImage.onClose();
+  };
+
   const onChange = async (file?: File) => {
     if (file) {
       setIsSubmitting(true);
       setFile(file);
+
       const res = await edgestore.publicFiles.upload({
         file,
-        onProgressChange: (progress) => {
-          // you can use this to show a progress bar
-          console.log(progress);
+        options: {
+          replaceTargetUrl: coverImage.url,
         },
       });
-      console.log(res);
 
       await update({
         id: params.documentId as Id<"documents">,
         coverImage: res.url,
       });
+
+      onClose();
     }
-    onClose();
   };
 
-  const onClose = () => {
-    setIsSubmitting(false);
-    setFile(undefined);
-    coverImage.onClose();
-  };
   return (
     <Dialog open={coverImage.isOpen} onOpenChange={coverImage.onClose}>
       <DialogContent>
@@ -59,5 +63,3 @@ const CoverImageModel = () => {
     </Dialog>
   );
 };
-
-export default CoverImageModel;
